@@ -78,10 +78,27 @@ namespace TaxiService
             Console.WriteLine("Підсумкова величина: виторг по кожному водію за зміну.");
         }
 
-        // Табулювання: буде пізніше
+        // Табулювання: вартість поїздки залежно від відстані
         static void ShowCostTable()
         {
-            Console.WriteLine("Поки не зроблено.");
+            double from = 1.0;      // початок, км
+            double to = 15.0;       // кінець, км
+            double step = 1.5;      // дробовий крок
+            double boarding = 50.0; // вартість посадки, грн
+            double tariff = 18.0;   // тариф за км, грн
+            double nightRate = 1.25; // нічний коефіцієнт
+
+            Console.WriteLine("Вартість поїздки залежно від відстані");
+            Console.WriteLine($"{"Км",8}{"День, грн",14}{"Ніч, грн",14}");
+            Console.WriteLine(new string('-', 36));
+
+            // + 1e-9, щоб остання стрічка не загубилася через похибку double
+            for (double x = from; x <= to + 1e-9; x += step)
+            {
+                double day = boarding + tariff * x;
+                double night = day * nightRate;
+                Console.WriteLine($"{x,8:F2}{day,14:F2}{night,14:F2}");
+            }
         }
 
         // Таблиця виторгу: буде пізніше
