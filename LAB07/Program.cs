@@ -101,10 +101,69 @@ namespace TaxiService
             }
         }
 
-        // Таблиця виторгу: буде пізніше
+         // Читає додатне ціле в діапазоні 1..max; false — якщо ввід неправильний
+        static bool ReadPositive(string prompt, int max, out int value)
+        {
+            Console.Write(prompt);
+            string text = Console.ReadLine();
+            if (!int.TryParse(text, out value) || value <= 0 || value > max)
+            {
+                Console.WriteLine($"Помилка: потрібне ціле число від 1 до {max}.");
+                return false;
+            }
+            return true;
+        }
+
+        // Таблиця на два входи: рядки — водії, стовпці — дні, підсумки по краях
         static void ShowRevenueTable()
         {
-            Console.WriteLine("Поки не зроблено.");
+            int rows, cols;
+
+            // Розміри питаємо в користувача; при помилці нічого не малюємо
+            if (!ReadPositive("Кількість водіїв (рядків), до 20: ", 20, out rows)) return;
+            if (!ReadPositive("Кількість днів (стовпців), до 10: ", 10, out cols)) return;
+
+            // Сума по кожному стовпцю (масив фіксованої довжини)
+            int[] colSums = new int[cols];
+            int grandTotal = 0;
+
+            Console.WriteLine();
+            Console.WriteLine("Виторг водіїв по днях, грн");
+
+            // Шапка: пропуск на ширину стовпця з назвами водіїв
+            Console.Write($"{"",10}");
+            for (int col = 1; col <= cols; col++)
+            {
+                Console.Write($"{"День " + col,8}");
+            }
+            Console.WriteLine($"{"Разом",10}");
+
+            // Таблиця: зовнішній цикл — рядки, внутрішній — стовпці
+            for (int row = 1; row <= rows; row++)
+            {
+                Console.Write($"{"Водій " + row,-10}");
+                int rowSum = 0; // обнуляємо для кожного нового рядка
+
+                for (int col = 1; col <= cols; col++)
+                {
+                    // Даних ще немає, тому значення — умовна формула
+                    int value = (row * 3 + col * 2) * 10;
+                    Console.Write($"{value,8}");
+                    rowSum += value;
+                    colSums[col - 1] += value;
+                }
+
+                Console.WriteLine($"{rowSum,10}");
+                grandTotal += rowSum;
+            }
+
+            // Рядок підсумків — тієї самої ширини, що й таблиця
+            Console.Write($"{"Разом",-10}");
+            for (int col = 0; col < cols; col++)
+            {
+                Console.Write($"{colSums[col],8}");
+            }
+            Console.WriteLine($"{grandTotal,10}");
         }
     }
 }
